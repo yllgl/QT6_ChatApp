@@ -1,0 +1,42 @@
+{
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell",
+            "env": {
+                "PATH": "${env:path};D:/Qt/Qt6.5/6.5.0/mingw_64/bin;D:/Qt/Qt6.5/Tools/mingw1120_64/bin"
+            }
+        },
+        "Command Prompt": null,
+        "Git Bash": null
+    },
+    //在settings.json中设置编译器路径
+    "C_Cpp.default.compilerPath": "D:/Qt/Qt6.5/Tools/mingw1120_64/bin/g++.exe",
+    "cmake.configureOnOpen": true,
+    "cmake.debugConfig": {
+        "miDebuggerPath": "D:/Qt/Qt6.5/Tools/mingw1120_64/bin/gdb.exe"
+    },
+    "files.associations": {
+        "new": "cpp",
+        "qpushbutton": "cpp",
+        "qvboxlayout": "cpp",
+        "array": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "qnetworkreply": "cpp",
+        "qlabel": "cpp",
+        "sstream": "cpp",
+        "qinputdialog": "cpp",
+        "qscopedpointer": "cpp",
+        "thread": "cpp",
+        "qsharedpointer": "cpp",
+        "qjsonobject": "cpp",
+        "typeinfo": "cpp",
+        "*.tcc": "cpp",
+        "ostream": "cpp",
+        "qjsonarray": "cpp",
+        "qdebug": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled",
+}

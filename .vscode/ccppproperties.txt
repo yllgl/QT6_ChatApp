@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Qt6.5.0",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "D:/Qt/Qt6.5/6.5.0/mingw_64/include/**",
+                "D:/Qt/Qt6.5/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++",
+                "D:/Qt/Qt6.5/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64",
+            "compilerPath": "D:/Qt/Qt6.5/Tools/mingw1120_64/bin/g++.exe"
+        }
+    ],
+    "version": 4
+}
