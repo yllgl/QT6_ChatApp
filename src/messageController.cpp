@@ -54,13 +54,14 @@ void MessageController::initMessage(const QJsonObject &data){
     }
 }
 void MessageController::receiveMessage(){
-    while (udpSocket.hasPendingDatagrams()) {
+    while (this->udpSocket->hasPendingDatagrams()) {
             QByteArray datagram;
-            datagram.resize(int(udpSocket.pendingDatagramSize()));
-            udpSocket.readDatagram(datagram.data(), datagram.size());
+            datagram.resize(int(this->udpSocket->pendingDatagramSize()));
+            this->udpSocket->readDatagram(datagram.data(), datagram.size());
 
             QJsonDocument jsonDoc = QJsonDocument::fromJson(datagram);
             QJsonObject jsonObj = jsonDoc.object();
+
             if(jsonObj.contains("other_user_join_group")){
                 jsonObj["operation_type"] = QString("chatItemController_other_user_join_group");
                 dynamic_cast<MainController*>(this->getMainController())->handleViewSignal(jsonObj);
@@ -72,11 +73,15 @@ void MessageController::receiveMessage(){
                 continue;
             }
             jsonObj["operation_type"] = QString("chatItemController_receive_message");
-            if(jsonObj.contains("from_friend_id")){
+            if(jsonObj.contains("receiver_id")){
                 jsonObj["isgroup"] = false;
-                dynamic_cast<MainController*>(this->getMainController())->handleViewSignal(jsonObj);
+                if(jsonObj["receiver_id"].toInt() == m_user->id().toInt()){
+                    dynamic_cast<MainController*>(this->getMainController())->handleViewSignal(jsonObj);
+                }
             }
             else if(jsonObj.contains("group_id")){
+                if(jsonObj["author_id"].toInt() == m_user->id().toInt())
+                    continue;
                 jsonObj["isgroup"] = true;
                 dynamic_cast<MainController*>(this->getMainController())->handleViewSignal(jsonObj);
             }

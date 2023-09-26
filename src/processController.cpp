@@ -35,7 +35,7 @@ void processController::loginProcess(const QJsonObject &data){
             view->close();
         }
     }
-    MainWindow* mainwindow = new MainWindow();
+    MainWindow* mainwindow = new MainWindow(nullptr,data["username"].toString());
     QJsonObject sendToGetMessageObj;
     sendToGetMessageObj["operation_type"] = "chatItemController_initChatItem";
     sendToGetMessageObj["data"] = data;

@@ -15,9 +15,15 @@ ClientApp::ClientApp() {
     maincontroller->appendController(QSharedPointer<BaseController>(processcontroller));
     ChatItemController* chatitemcontroller = new ChatItemController(maincontroller);
     maincontroller->appendController(QSharedPointer<BaseController>(chatitemcontroller));
-    MessageController* messagecontroller = new MessageController(maincontroller);
+    if(!udpSocket.bind(QHostAddress::AnyIPv4, udpSocket.localPort(), QUdpSocket::ShareAddress))
+    {
+        qDebug() << "Error: Could not bind to port";
+        return;
+    }
+    MessageController* messagecontroller = new MessageController(maincontroller,&udpSocket);
+    
     maincontroller->appendController(QSharedPointer<BaseController>(messagecontroller));
-    LoginWidget *loginWidget = new LoginWidget();
+    LoginWidget *loginWidget = new LoginWidget(nullptr,udpSocket.localPort());
     maincontroller->appendView(QSharedPointer<View>(loginWidget));
     loginWidget->show();
 }

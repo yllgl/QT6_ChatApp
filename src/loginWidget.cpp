@@ -11,9 +11,10 @@
 #include "utils.h"
 #include "NetworkHelper.h"
 #include <QScopedPointer>
-LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent),View(){
+LoginWidget::LoginWidget(QWidget *parent,int port) : QWidget(parent),View(){
     initUI();
     helper = QSharedPointer<NetworkHelper>::create(this);
+    this->port = port;
 }
 void LoginWidget::initUI()
 {
@@ -56,6 +57,10 @@ void LoginWidget::login()
     // Connect signals
     connect(helper.data(), &NetworkHelper::requestFinished, this, [this](const QString &identifier, const QJsonObject &response){
         if (identifier == "login") {
+            QJsonObject loginData;
+            loginData["user_id"] = response["user_id"].toInt();
+            loginData["port"] = QString::number(this->port);
+            helper->sendRequest(QUrl("http://192.168.16.202:5000/registerPort"), loginData, "port");
             if (response.contains("message")){
                 if(response["message"].toString().contains("success")) {
                     QJsonObject obj = response;
@@ -76,6 +81,9 @@ void LoginWidget::login()
                     QMessageBox::warning(this, "Login failed", message);
                 }
             }
+        }
+        else if(identifier == "port"){
+            qDebug() << "LoginWidget port" << response;
         }
     });
     connect(helper.data(), &NetworkHelper::requestFailed, this, [this](const QString &identifier, const QString &errorMessage){

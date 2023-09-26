@@ -10,7 +10,7 @@ class LoginWidget : public QWidget,public View
 {
     Q_OBJECT
 public:
-    LoginWidget(QWidget *parent = nullptr);
+    LoginWidget(QWidget *parent = nullptr,int port = 0);
     void updateUI(const QJsonObject &data) override;
 private:
 QLineEdit* usernameLineEdit;
@@ -22,6 +22,7 @@ void login();
 void registerUser();
 void initUI();
 QSharedPointer<NetworkHelper> helper;
+int port;
 };
 #endif // LOGINWIDGET_H
 

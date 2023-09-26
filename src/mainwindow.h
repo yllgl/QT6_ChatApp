@@ -13,8 +13,8 @@ class MainWindow : public QMainWindow,public View {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    void initUI();
+    MainWindow(QWidget *parent = nullptr,QString username = "");
+    void initUI(QString username="");
     void addChatItem(AbstractChatItem &item);
     void removeChatItem(const int index);
     void resizeEvent(QResizeEvent *event);

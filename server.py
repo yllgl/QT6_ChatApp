@@ -19,6 +19,7 @@ class User(db.Model):
     lastip = db.Column(db.String(45), nullable=True)  # adjusted size for IPv6 compatibility
     last_heartbeat = db.Column(db.DateTime, default=datetime.now)
     isdeleted = db.Column(db.Boolean, default=False)
+    port = db.Column(db.Integer, nullable=True)
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -121,6 +122,15 @@ def get_user_info():
         "message": "Logged in successfully!", "user_id": user.id, "nickname": user.nickname, "username": user.username
     })
 
+@app.route('/registerPort', methods=['POST'])
+def registerPort():
+    port = request.json.get('port')
+    user_id = request.json.get('user_id')
+    user = User.query.get(user_id)
+    user.port = port
+    db.session.commit()
+    return jsonify({"message": "Port registered successfully!"}),200
+
 @app.route('/add_friend', methods=['POST'])
 def add_friend():
     user_id = request.json.get('user_id', None)
@@ -145,7 +155,7 @@ def add_friend():
     if friend_user.online:
         serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         send_message = json.dumps({"other_user_add_friend":True,"message": "You have a new friend request from {}!".format(User.query.get(user_id).nickname),"user_id":user_id,"username":User.query.get(user_id).username,"nickname":User.query.get(user_id).nickname})
-        serverSocket.sendto(send_message.encode(), (friend_user.lastip, UDP_PORT))
+        serverSocket.sendto(send_message.encode(), (friend_user.lastip, friend_user.port))
     return jsonify({"message": "Friend added successfully!", "user_id": friend_id, "username": friend_user.username, "nickname": friend_user.nickname})
 def send_join_group(author_id,group_id):
     membership = GroupMembers.query.filter_by(user_id=author_id, group_id=group_id).first()
@@ -161,10 +171,10 @@ def send_join_group(author_id,group_id):
     )
 
     # Extract the lastip addresses from the result
-    ips = [user.lastip for user in users]
+    ips = [(user.lastip,user.port) for user in users]
     send_message = json.dumps({"other_user_join_group":True,"author_id":author_id,"username":User.query.get(author_id).username,"nickname":User.query.get(author_id).nickname,"group_id":group_id})
-    for ip in ips:
-        serverSocket.sendto(send_message.encode(), (ip, UDP_PORT))
+    for ip,port in ips:
+        serverSocket.sendto(send_message.encode(), (ip, port))
     return True
 
 @app.route('/join_group', methods=['POST'])
@@ -281,8 +291,9 @@ def send_private_message():
     if User.query.get(receiver_id).online:
         serverSocket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         send_message = json.dumps({"content":content,"author_id":sender_id,"timestamp":message.timestamp.isoformat(),"nickname":User.query.get(sender_id).nickname,
-                                   "username":User.query.get(sender_id).username,"from_friend_id":sender_id})
-        serverSocket.sendto(send_message.encode(), (User.query.get(receiver_id).lastip, UDP_PORT))
+                                   "username":User.query.get(sender_id).username,"from_friend_id":sender_id,"sender_id":sender_id,"receiver_id":receiver_id})
+        
+        serverSocket.sendto(send_message.encode(), (User.query.get(receiver_id).lastip, User.query.get(receiver_id).port))
     db.session.commit()
     
     return jsonify({"message": "Private message sent successfully!"})
@@ -312,10 +323,10 @@ def send_group_message():
     )
 
     # Extract the lastip addresses from the result
-    ips = [user.lastip for user in users]
-    send_message = json.dumps({"content":content,"author_id":author_id,"nickname":User.query.get(author_id).username,"timestamp":message.timestamp.isoformat(),"nickname":User.query.get(author_id).nickname,"group_id":group_id})
-    for ip in ips:
-        serverSocket.sendto(send_message.encode(), (ip, UDP_PORT))
+    ips = [(user.lastip,user.port) for user in users]
+    send_message = json.dumps({"content":content,"author_id":author_id,"username":User.query.get(author_id).username,"timestamp":message.timestamp.isoformat(),"nickname":User.query.get(author_id).nickname,"group_id":group_id})
+    for ip,port in ips:
+        serverSocket.sendto(send_message.encode(), (ip, port))
     db.session.commit()
     
     return jsonify({"message": "Group message sent successfully!"})

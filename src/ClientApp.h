@@ -5,6 +5,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTimer>
+#include <QUdpSocket>
 class LoginWidget;
 class MainController;
 class MainWindow;
@@ -15,6 +16,7 @@ public:
     ClientApp();
 private:
     MainController* maincontroller;
+    QUdpSocket udpSocket;
 };
 
 #endif // CLIENTAPP_H

@@ -17,7 +17,7 @@
 #include <QLabel>
 #include "utils.h"
 #include "userChatItem.h"
-void MainWindow::initUI(){
+void MainWindow::initUI(QString username){
 // Set window title and size
     setWindowTitle("Sample Qt6 App");
     resize(200, 500);
@@ -30,7 +30,7 @@ void MainWindow::initUI(){
     mainLayout = new QVBoxLayout(centralWidget);
 
     // Add a title label at the top
-    titleLabel = new QLabel("Your Title Here", this);
+    titleLabel = new QLabel(username, this);
     titleLabel->setAlignment(Qt::AlignCenter);
     titleLabel->setStyleSheet("font-size: 24px; padding: 20px;");
     mainLayout->addWidget(titleLabel);
@@ -139,8 +139,8 @@ void MainWindow::add_group() {
         emit this->signal->sendToController(obj);
     }
 }
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent),View() {
-    initUI();
+MainWindow::MainWindow(QWidget *parent,QString username) : QMainWindow(parent),View() {
+    initUI(username);
 }
 void MainWindow::addChatItem(AbstractChatItem &item){
     ChatWidgetItem *chatItem = new ChatWidgetItem(&item);
